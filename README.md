@@ -11,6 +11,15 @@ real SQLite database via an Express API.
 - **Database:** SQLite via `better-sqlite3`, with **hand-written SQL** (no ORM)
 - **Tests:** Vitest + Supertest
 
+## Live demo
+
+- **App:** https://taskflow-board-rho.vercel.app
+- **API:** https://taskflow-api-gn9j.onrender.com/api/board
+
+The backend runs on Render's free plan, which sleeps after inactivity, so the
+first request after an idle period can take up to ~50 seconds to wake. It seeds
+itself on first boot, so the demo is never empty.
+
 ---
 
 ## Quick start (from a fresh clone)

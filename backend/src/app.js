@@ -10,6 +10,15 @@ export function createApp(db) {
   app.use(cors());
   app.use(express.json());
 
+  app.get('/', (_req, res) =>
+    res.json({
+      name: 'TaskFlow API',
+      status: 'ok',
+      app: 'https://taskflow-board-rho.vercel.app',
+      endpoints: ['/api/health', '/api/board', '/api/boards/:id/stats', '/api/boards/:id/tasks?priority=High'],
+    })
+  );
+
   app.get('/api/health', (_req, res) => res.json({ ok: true }));
   app.use('/api', boardRoutes);
   app.use('/api', taskRoutes);
