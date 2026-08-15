@@ -1,23 +1,24 @@
+import { pathToFileURL } from 'node:url';
 import db, { applySchema } from './index.js';
 
-function seed() {
-  applySchema(db);
+export function seedDatabase(database) {
+  applySchema(database);
 
-  db.exec('DELETE FROM tasks; DELETE FROM columns; DELETE FROM boards;');
-  db.exec(
+  database.exec('DELETE FROM tasks; DELETE FROM columns; DELETE FROM boards;');
+  database.exec(
     "DELETE FROM sqlite_sequence WHERE name IN ('tasks', 'columns', 'boards');"
   );
 
-  const insertBoard = db.prepare('INSERT INTO boards (name) VALUES (?)');
-  const insertColumn = db.prepare(
+  const insertBoard = database.prepare('INSERT INTO boards (name) VALUES (?)');
+  const insertColumn = database.prepare(
     'INSERT INTO columns (board_id, name, position) VALUES (?, ?, ?)'
   );
-  const insertTask = db.prepare(
+  const insertTask = database.prepare(
     `INSERT INTO tasks (column_id, title, description, priority, position)
      VALUES (?, ?, ?, ?, ?)`
   );
 
-  const seedAll = db.transaction(() => {
+  const seedAll = database.transaction(() => {
     const boardId = insertBoard.run('My First Board').lastInsertRowid;
 
     const columns = ['To Do', 'In Progress', 'Done'].map((name, i) =>
@@ -40,8 +41,13 @@ function seed() {
   });
 
   seedAll();
-  console.log('Seeded database: 1 board, 3 columns, 6 tasks.');
 }
 
-seed();
-db.close();
+const isDirectRun =
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isDirectRun) {
+  seedDatabase(db);
+  console.log('Seeded database: 1 board, 3 columns, 6 tasks.');
+  db.close();
+}

@@ -240,7 +240,7 @@ the same `schema.sql`, so they never touch your real `taskflow.db`.
 
 ### Time spent
 
-Roughly **4–5 hours**, most of it on the schema, the query layer, and testing.
+Roughly **4-5 hours**, most of it on the schema, the query layer, and testing.
 
 ### One thing I found interesting
 
@@ -252,9 +252,21 @@ made sure the app enables it on connect (`db/index.js`), which is also why the
 
 ---
 
-## Deploying (optional)
+## Deploying
 
-The frontend build (`npm run build --prefix frontend`) is a static bundle; point
-it at a deployed backend with the `VITE_API_BASE` env var. The backend needs a
-writable path for SQLite - set `DATABASE_PATH` to a persistent location and run
-`node src/db/seed.js` once on first boot.
+The repo includes a `render.yaml` blueprint that deploys the backend to
+[Render](https://render.com) as a Node web service. On first boot the server
+seeds itself if the database is empty, so the live API is never blank.
+
+**Backend (Render):**
+
+1. Push this repo to GitHub and connect it on Render (New > Blueprint), or create
+   a Web Service manually with Root Directory `backend`, build `npm install`,
+   start `npm start`.
+2. Render sets `PORT` automatically; the server reads it.
+3. On the free plan the SQLite file lives on an ephemeral disk (fine for a demo -
+   it re-seeds on cold start). For durable storage, attach a Render Disk and set
+   `DATABASE_PATH` to a path on it (e.g. `/data/taskflow.db`).
+
+**Frontend (Vercel / Netlify):** build `npm run build` in `frontend`, and set the
+`VITE_API_BASE` env var to the deployed backend URL so the app calls it directly.
